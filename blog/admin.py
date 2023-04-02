@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from blog.models import articles
+from blog.models import articles, PermissionGroup, Writer
 
 from guardian.admin import GuardedModelAdmin
 from django.contrib.auth.models import Group, SubGroups
-from .forms import CustomGroupAdminForm, SubGroupForm
+from .forms import  SubGroupForm, CustomGroupForm
 from blog.models import articles
+
 
 class ArticleAdmin(GuardedModelAdmin):
     list_display = ('title', 'slug', 'body')
@@ -16,19 +17,26 @@ class ArticleAdmin(GuardedModelAdmin):
 
 admin.site.register(articles, ArticleAdmin)
 
+class WriterAdmin(GuardedModelAdmin):
+    list_display = ('name', 'slug', 'bio', 'date')
+    search_fields = ('name', 'bio')
+    ordering = ('-date',)
+    date_hierarchy = 'date'
 
-
+admin.site.register(Writer, WriterAdmin)
 class GroupAdmin(admin.ModelAdmin):
-    form = CustomGroupAdminForm
+    form = CustomGroupForm
 
     class Media:
         js = ('blog/dynamic_fields.js',)
 
+
 admin.site.unregister(Group)
-admin.site.register(Group, GroupAdmin)
+admin.site.register(PermissionGroup, GroupAdmin)
 
-class SubGroupAdmin(admin.ModelAdmin):
-    form = SubGroupForm
 
-admin.site.register(SubGroups, SubGroupAdmin)
-
+# class SubGroupAdmin(admin.ModelAdmin):
+#     form = SubGroupForm
+#
+#
+# admin.site.register(PermissionGroup, SubGroupAdmin)

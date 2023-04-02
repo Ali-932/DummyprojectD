@@ -1,4 +1,11 @@
+from django.contrib.auth.models import Group
 from django.db import models
+from treenode.models import TreeNodeModel
+
+
+class PermissionGroup(Group, TreeNodeModel):
+    pass
+    # is_template = models.BooleanField(default=False)
 
 
 class Writer(models.Model):
@@ -6,7 +13,6 @@ class Writer(models.Model):
     slug = models.SlugField()
     bio = models.TextField()
     date = models.DateTimeField()
-
 
     def __str__(self):
         return self.name
@@ -17,7 +23,6 @@ class articles(models.Model):
     slug = models.SlugField()
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     def __str__(self):
         return self.title
@@ -30,5 +35,3 @@ class articles(models.Model):
             ('sign_articles', 'Can sign articles'),
         )
         get_latest_by = 'created_at'
-
-

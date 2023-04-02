@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const permissionsField = document.querySelector('#id_permissions');
     const selectedObjectsField = document.querySelector('#id_selected_objects');
 
-    function fetchObjects(permissionId,isInitial=false) {
-        fetch(`/fetch_objects/?permission_id=${permissionId}&is_initial=${isInitial}`)
+    function fetchObjects(permissionIds, isInitial = false) {
+        fetch(`/fetch_objects/?permission_ids=${permissionIds.join(',')}&is_initial=${isInitial}`)
             .then(response => response.json())
             .then(data => {
                 // Remove existing options
@@ -23,16 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (permissionsField && selectedObjectsField) {
         // Load objects when the page loads if there's a selected permission
-        const initialPermissionId = permissionsField.value;
-        if (initialPermissionId) {
-            fetchObjects(initialPermissionId,true);
+        const initialPermissionIds = Array.from(permissionsField.selectedOptions).map(option => option.value);
+        if (initialPermissionIds.length) {
+            fetchObjects(initialPermissionIds, true);
         }
 
         // Update objects when the permission selection changes
         permissionsField.addEventListener('change', function () {
-            const permissionId = permissionsField.value;
-            if (permissionId) {
-                fetchObjects(permissionId);
+            const permissionIds = Array.from(permissionsField.selectedOptions).map(option => option.value);
+            if (permissionIds.length) {
+                fetchObjects(permissionIds);
             } else {
                 selectedObjectsField.innerHTML = '';
             }
