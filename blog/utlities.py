@@ -17,6 +17,7 @@ def assign_permissions_and_objects_to_group(group, permissions, objects, is_edit
         for perm in Permission.objects.all():
             remove_perm(f"{perm.content_type.app_label}.{perm.codename}", group)
 
+    # for different content types
     content_type_object_map = {}
     for obj in objects:
         content_type = ContentType.objects.get_for_model(obj)
@@ -28,7 +29,7 @@ def assign_permissions_and_objects_to_group(group, permissions, objects, is_edit
         objs = content_type_object_map.get(perm.content_type, [])
         for obj in objs:
             assign_perm(perm.codename, group, obj=obj)
-
+    # for parent group
     for child_group in group.tn_children.all():
         GroupObjectPermission.objects.filter(group=child_group).delete()
 
@@ -38,6 +39,7 @@ def assign_permissions_and_objects_to_group(group, permissions, objects, is_edit
             objs = content_type_object_map.get(perm.content_type, [])
             for obj in objs:
                 assign_perm(perm.codename, child_group, obj=obj)
+    # for child group
     if parent_group := group.tn_parent:
         parent_group_permissions = Permission.objects.filter(group=parent_group, content_type__in=content_type_object_map.keys())
 
